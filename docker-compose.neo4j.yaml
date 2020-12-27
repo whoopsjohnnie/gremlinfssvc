@@ -1,0 +1,62 @@
+
+# 
+# Based on example here
+# https://github.com/gremlin-orm/gremlin-orm-neo4j
+# 
+# MIT license found in LICENSE file
+# 
+
+# version: "2"
+version: '3'
+services:
+
+  gremlin-server:
+    image: gremlinorm/gremlin-server-neo4j
+    container_name: gremlin-server
+    ports:
+      - "8182:8182"
+    volumes:
+      - ./data/:/data/
+      - ./gremlin-server-neo4j/conf/gremlin-server-custom.yml:/gremlin-server/conf/gremlin-server-custom.yml
+      - ./gremlin-server-neo4j/conf/neo4j.properties:/gremlin-server/conf/neo4j.properties
+      - ./gremlin-server-neo4j/scripts/neo4j.groovy:/gremlin-server/scripts/neo4j.groovy
+    # This should change to gremlin or similar, 
+    # but GFS connects to orientdb host by default
+    hostname: "gremlin"
+    networks:
+      - gremlinfs
+
+  neo4j-server:
+    image: neo4j:2.3
+    environment:
+      # - NEO4J_AUTH=neo4j/pass
+      - NEO4J_AUTH=none
+    ports:
+      - "7474:7474" # HTTP
+      - "7687:7687" # Bolt
+    volumes:
+      - ./data/copy:/data/
+    hostname: "neo4j"
+    networks:
+      - gremlinfs
+
+  rabbitmq:
+    image: "rabbitmq:3-management"
+    environment:
+      RABBITMQ_DEFAULT_USER: "rabbitmq"
+      RABBITMQ_DEFAULT_PASS: "rabbitmq"
+      RABBITMQ_DEFAULT_VHOST: "/"
+      RABBITMQ_LOG_BASE: "/var/log/rabbitmq"
+    hostname: "rabbitmq"
+    networks:
+      - gremlinfs
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    labels:
+      NAME: "rabbitmq"
+
+networks:
+  gremlinfs: 
+    external:
+      name: gremlinfs

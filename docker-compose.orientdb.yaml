@@ -16,7 +16,8 @@ services:
       - ./data/orientdb/databases:/orientdb/databases
     environment:
       ORIENTDB_ROOT_PASSWORD: root
-    hostname: "orientdb"
+    # hostname: "orientdb"
+    hostname: "gremlin"
     networks:
       - gremlinfs
     ports:
