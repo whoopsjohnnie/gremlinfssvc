@@ -1,0 +1,33 @@
+
+> cd gremlin-server-neo4j
+
+> docker build -f Dockerfile -t gfs-gremlin:latest .
+...
+Successfully built 99bbd28e73a9
+Successfully tagged gfs-gremlin:latest
+
+# AWS ECR
+
+# > pip3 install awscli --upgrade --user
+# > pip3 freeze --user
+# awscli==1.18.219
+# 
+# > pip3 show awscli
+# Location: /Users/john/Library/Python/3.6/lib/python/site-packages
+# 
+# > file /Users/john/Library/Python/3.6/bin/aws
+
+
+> export AWS_ECR_USER_PROFILE="ecr-user"
+> export AWS_REGION="us-east-2"
+
+> aws ecr get-login --no-include-email --profile=$AWS_ECR_USER_PROFILE --region=$AWS_REGION
+docker login -u AWS -p ... https://536095940629.dkr.ecr.us-east-2.amazonaws.com
+
+> docker login -u AWS -p ... https://536095940629.dkr.ecr.us-east-2.amazonaws.com
+WARNING! Using --password via the CLI is insecure. Use --password-stdin.
+Login Succeeded
+
+# 536095940629.dkr.ecr.us-east-2.amazonaws.com/gfs-gremlin
+> docker tag gfs-gremlin:latest 536095940629.dkr.ecr.us-east-2.amazonaws.com/gfs-gremlin:latest
+> docker push 536095940629.dkr.ecr.us-east-2.amazonaws.com/gfs-gremlin:latest
