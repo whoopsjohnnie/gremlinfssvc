@@ -10,13 +10,21 @@
 version: '3'
 services:
 
+  # > cd ./gremlin-server-neo4j
+  # > docker build -t gremlin-server-neo4j -f Dockerfile .
   gremlin-server:
-    image: gremlinorm/gremlin-server-neo4j
+    # image: gfs-gremlin:latest
+    image: 513562861795.dkr.ecr.us-west-2.amazonaws.com/gfs-gremlin:latest
+    # build:
+    #   context: ./gremlin-server-neo4j/
+    #   dockerfile: Dockerfile
     container_name: gremlin-server
     ports:
       - "8182:8182"
     volumes:
-      - ./data/:/data/
+      # - ./data/:/data/
+      # - /tmp/data/neo4j/:/data/
+      - ./data/neo4j/data/
       - ./gremlin-server-neo4j/conf/gremlin-server-custom.yml:/gremlin-server/conf/gremlin-server-custom.yml
       - ./gremlin-server-neo4j/conf/neo4j.properties:/gremlin-server/conf/neo4j.properties
       - ./gremlin-server-neo4j/scripts/neo4j.groovy:/gremlin-server/scripts/neo4j.groovy
@@ -27,15 +35,23 @@ services:
       - gremlinfs
 
   neo4j-server:
-    image: neo4j:2.3
+    # image: neo4j:2.3
+    image: neo4j:3.5.8
     environment:
       # - NEO4J_AUTH=neo4j/pass
       - NEO4J_AUTH=none
+    ulimits:
+      # nproc: 65535
+      nofile:
+        soft: 40000
+        hard: 40000
     ports:
       - "7474:7474" # HTTP
       - "7687:7687" # Bolt
     volumes:
-      - ./data/copy:/data/
+      # - ./data/copy:/data/
+      # - /tmp/data/neo4j/:/data/
+      - ./data/neo4j/data/
     hostname: "neo4j"
     networks:
       - gremlinfs
